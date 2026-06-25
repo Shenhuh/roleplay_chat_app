@@ -14,6 +14,7 @@ export default function ChatPage({ params, searchParams }: {
   const { characterId } = use(params)
   const { portraying } = use(searchParams)
   const [conversationId, setConversationId] = useState(null);
+  const [blocked, setBlocked] = useState(false);
   const [moodScore, setMoodScore] = useState(50);
   const [characterName, setCharacterName] = useState(null);
   const [messages, setMessages] = useState<{ role: string; content: string }[]>([])
@@ -82,8 +83,8 @@ export default function ChatPage({ params, searchParams }: {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: updatedMessages, conversation_id: conversationId, character_id: characterId, portraying: portraying })
     })
-
     const data = await response.json()
+    setBlocked(data.blocked)
     setMoodScore(data.mood_score)
     setLoadingResponse(false)
 
@@ -116,11 +117,12 @@ export default function ChatPage({ params, searchParams }: {
         </div>
         ))}
         {isLoadingResponse && <p className='capitalize'>{characterName} is typing...</p>}
+        {blocked && <p className='text-center capitalize'>{characterName} has blocked you.</p>}
       </div>
 
       <div className="p-4 border-t flex gap-2">
-        <Input value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={handleKeyDown} placeholder="Type a message..." />
-        <Button onClick={sendMessage}>Send</Button>
+        <Input value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={handleKeyDown} placeholder="Type a message..." disabled={blocked} />
+        <Button onClick={sendMessage}>{blocked ? "Request Unblock" : "Send"}</Button>  
       </div>
     </div>
   )
