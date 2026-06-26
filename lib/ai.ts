@@ -10,5 +10,15 @@ export async function getAIResponse(messages: {role: string, content: string}[])
 
     })
     const parsed = await response.json();
+
+    console.log(parsed);
+
+    if (!response.ok) {
+        console.error(parsed);
+        throw new Error("DeepSeek request failed");
+    }
+
+    console.log(parsed);
+
     return parsed.choices[0].message.content;
 }
