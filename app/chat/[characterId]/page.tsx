@@ -63,9 +63,9 @@ export default function ChatPage({ params, searchParams }: {
   }, [])
 
   async function sendMessage() {
-    setLoadingResponse(true)
-    
     if (!input || !conversationId) return
+
+    setLoadingResponse(true)
 
     const updatedMessages = [...messages, { role: 'user', content: input }]
 
